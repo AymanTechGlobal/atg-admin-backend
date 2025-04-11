@@ -1,15 +1,16 @@
-const express = require("express");
-const cors = require("cors");
-const mongoose = require("mongoose");
-const dotenv = require("dotenv");
-const bodyParser = require("body-parser");
-const helmet = require("helmet");
-const morgan = require("morgan");
+const express = require("express"); //importing express for routing
+const cors = require("cors"); //importing cors for cross-origin resource sharing
+const mongoose = require("mongoose"); //importing mongoose for database connection
+const dotenv = require("dotenv"); //importing dotenv for environment variables
+const bodyParser = require("body-parser"); //importing body-parser for parsing JSON and URL-encoded bodies
+const helmet = require("helmet"); //importing helmet for security headers
+const morgan = require("morgan"); //importing morgan for logging
 
 const clientRoute = require("./Routes/client");
 const generalRoute = require("./Routes/general");
 const managementRoute = require("./Routes/management");
 const authRoute = require("./Routes/login");
+const logoutRoute = require("./Routes/logout");
 // Middleware
 
 const app = express();
@@ -27,6 +28,7 @@ app.use("/client", clientRoute);
 app.use("/general", generalRoute);
 app.use("/management", managementRoute);
 app.use("/api/auth", authRoute);
+app.use("/api/logout", logoutRoute);
 
 // MongoDB Connection
 const PORT = process.env.PORT || 5000;

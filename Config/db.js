@@ -10,3 +10,6 @@ try {
 
 const db = mongoose.connection.useDb("Admin");
 module.exports = db;
+
+//this is the database connection for the admin panel
+
