@@ -24,9 +24,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // Routes
-app.use("/client", clientRoute);
-app.use("/general", generalRoute);
-app.use("/management", managementRoute);
+app.use("/api/client", clientRoute);
+app.use("/api/general", generalRoute);
+app.use("/api/management", managementRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/logout", logoutRoute);
 
