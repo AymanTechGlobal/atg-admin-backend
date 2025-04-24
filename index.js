@@ -12,6 +12,7 @@ const managementRoute = require("./Routes/management");
 const authRoute = require("./Routes/login");
 const logoutRoute = require("./Routes/logout");
 const appointmentRoute = require("./Routes/appointment");
+const carePlanRoute = require("./Routes/carePlan");
 
 const app = express();
 dotenv.config();
@@ -25,11 +26,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // Routes
 
+app.use("/api/client", clientRoute);
 app.use("/api/general", generalRoute);
 app.use("/api/management", managementRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/logout", logoutRoute);
 app.use("/api/appointments", appointmentRoute);
+app.use("/api/careplans", carePlanRoute);
 
 // MongoDB Connection
 const PORT = process.env.PORT || 5000;
