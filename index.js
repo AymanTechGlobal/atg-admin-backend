@@ -13,6 +13,7 @@ const authRoute = require("./Routes/login");
 const logoutRoute = require("./Routes/logout");
 const appointmentRoute = require("./Routes/appointment");
 const carePlanRoute = require("./Routes/carePlan");
+const patientRoute = require("./Routes/patients");
 
 const app = express();
 dotenv.config();
@@ -33,6 +34,7 @@ app.use("/api/auth", authRoute);
 app.use("/api/logout", logoutRoute);
 app.use("/api/appointments", appointmentRoute);
 app.use("/api/careplans", carePlanRoute);
+app.use("/api/patients", patientRoute);
 
 // MongoDB Connection
 const PORT = process.env.PORT || 5000;
