@@ -1,33 +1,30 @@
 const Patient = require("../Models/Patients");
 
 // Get all patients
-exports.getAllPatients = async (req, res) => {
+const getAllPatients = async (req, res) => {
   try {
-    const patients = await Patient.find().sort({ regDate: -1 });
-    const totalPatients = await Patient.countDocuments();
-
+    const patients = await Patient.find().sort({ submittedAt: -1 });
     res.status(200).json({
       success: true,
-      count: totalPatients,
       data: patients,
     });
   } catch (error) {
+    console.error("Error fetching patients:", error);
     res.status(500).json({
       success: false,
-      message: "Error fetching patients",
-      error: error.message,
+      error: "Error fetching patients",
     });
   }
 };
 
 // Get single patient
-exports.getPatient = async (req, res) => {
+const getPatient = async (req, res) => {
   try {
-    const patient = await Patient.findById(req.params.id);
+    const patient = await Patient.findOne({ userId: req.params.id });
     if (!patient) {
       return res.status(404).json({
         success: false,
-        message: "Patient not found",
+        error: "Patient not found",
       });
     }
     res.status(200).json({
@@ -35,16 +32,16 @@ exports.getPatient = async (req, res) => {
       data: patient,
     });
   } catch (error) {
+    console.error("Error fetching patient:", error);
     res.status(500).json({
       success: false,
-      message: "Error fetching patient",
-      error: error.message,
+      error: "Error fetching patient",
     });
   }
 };
 
 // Get patient statistics
-exports.getPatientStats = async (req, res) => {
+const getPatientStats = async (req, res) => {
   try {
     const totalPatients = await Patient.countDocuments();
     const activePatients = await Patient.countDocuments({ status: "Active" });
@@ -65,10 +62,16 @@ exports.getPatientStats = async (req, res) => {
       },
     });
   } catch (error) {
+    console.error("Error fetching patient statistics:", error);
     res.status(500).json({
       success: false,
-      message: "Error fetching patient statistics",
-      error: error.message,
+      error: "Error fetching patient statistics",
     });
   }
+};
+
+module.exports = {
+  getAllPatients,
+  getPatient,
+  getPatientStats,
 };

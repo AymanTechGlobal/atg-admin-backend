@@ -6,17 +6,20 @@ const bodyParser = require("body-parser"); //importing body-parser for parsing J
 const helmet = require("helmet"); //importing helmet for security headers
 const morgan = require("morgan"); //importing morgan for logging
 
+// Import routes
 const clientRoute = require("./Routes/client");
-const generalRoute = require("./Routes/general");
-const managementRoute = require("./Routes/management");
 const authRoute = require("./Routes/login");
 const logoutRoute = require("./Routes/logout");
 const appointmentRoute = require("./Routes/appointment");
 const carePlanRoute = require("./Routes/carePlan");
 const patientRoute = require("./Routes/patients");
+const careNavigatorRoute = require("./Routes/careNavigator");
+const adminRoute = require("./Routes/admin");
 
 const app = express();
 dotenv.config();
+
+// Middleware
 app.use(express.json());
 app.use(cors());
 app.use(helmet());
@@ -26,15 +29,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // Routes
-
 app.use("/api/client", clientRoute);
-app.use("/api/general", generalRoute);
-app.use("/api/management", managementRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/logout", logoutRoute);
 app.use("/api/appointments", appointmentRoute);
 app.use("/api/careplans", carePlanRoute);
 app.use("/api/patients", patientRoute);
+app.use("/api/care-navigators", careNavigatorRoute);
+app.use("/api/admin", adminRoute);
 
 // MongoDB Connection
 const PORT = process.env.PORT || 5000;

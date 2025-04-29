@@ -21,6 +21,10 @@ const UserSchema = new mongoose.Schema({
         enum: ['admin', 'user'],
         default: 'user',
     },
+    contact: {
+        type: Number,
+        required: [true, 'Please provide a contact number'],
+    },
     createdAt: {
         type: Date,
         default: Date.now,

@@ -1,3 +1,5 @@
+// models/Patient.js
+
 const mongoose = require("mongoose");
 
 const PatientSchema = new mongoose.Schema(
@@ -6,63 +8,34 @@ const PatientSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+      default: () => uuidv4(),
     },
-    patientName: {
+    submittedAt: {
+      type: Date,
+      required: true,
+    },
+    allergies: {
+      type: String,
+      default: "",
+    },
+    contactNumber: {
       type: String,
       required: true,
       trim: true,
     },
-    age: {
-      type: Number,
+    dateOfBirth: {
+      type: Date,
       required: true,
-      min: 0,
-      max: 120,
+    },
+    fullName: {
+      type: String,
+      required: true,
+      trim: true,
     },
     gender: {
       type: String,
       required: true,
       enum: ["Male", "Female", "Other"],
-    },
-    phone: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    email: {
-      type: String,
-      trim: true,
-      lowercase: true,
-    },
-    address: {
-      street: String,
-      city: String,
-      state: String,
-      zipCode: String,
-    },
-    careNavigator: {
-      type: String,
-      required: true,
-    },
-    regDate: {
-      type: Date,
-      default: Date.now,
-    },
-    status: {
-      type: String,
-      enum: ["Active", "Inactive", "Deceased"],
-      default: "Active",
-    },
-    medicalHistory: [
-      {
-        condition: String,
-        diagnosis: String,
-        date: Date,
-      },
-    ],
-    emergencyContact: {
-      name: String,
-      relationship: String,
-      phone: String,
     },
   },
   {
@@ -70,4 +43,6 @@ const PatientSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Patient", PatientSchema);
+// Check if model already exists to avoid re-registering
+module.exports =
+  mongoose.models.Patient || mongoose.model("Patient", PatientSchema);
