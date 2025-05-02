@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const CareNavigator = require("./CareNavigator");
 
 // status, date , time, doctor can be updated
 // other data could only be read.
@@ -14,15 +13,7 @@ const appointmentSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    careNeed: {
-      type: String,
-      required: true,
-    },
     CareNavigator: {
-      type: String,
-      required: true,
-    },
-    Doctor: {
       type: String,
       required: true,
     },
@@ -36,16 +27,25 @@ const appointmentSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Scheduled", "Completed", "Cancelled", "Rescheduled"],
-      default: "Scheduled",
+      enum: ["Active", "Cancelled", "Completed"],
+      default: "Active",
     },
     notes: {
       type: String,
+    },
+    syncTimestamp: {
+      type: Date,
+      default: Date.now,
     },
   },
   {
     timestamps: true,
   }
 );
+
+// Add index for faster queries
+appointmentSchema.index({ appointmentId: 1 });
+appointmentSchema.index({ status: 1 });
+appointmentSchema.index({ appointmentDate: 1 });
 
 module.exports = mongoose.model("Appointment", appointmentSchema);

@@ -5,10 +5,12 @@ const {
   getAppointment,
   updateAppointment,
   deleteAppointment,
+  getSyncStatus,
 } = require("../Controllers/appointmentController");
 
 // Routes
 router.get("/", getAllAppointments);
+router.get("/sync-status", getSyncStatus);
 router.get("/:id", getAppointment);
 router.put("/:id", updateAppointment);
 router.delete("/:id", deleteAppointment);

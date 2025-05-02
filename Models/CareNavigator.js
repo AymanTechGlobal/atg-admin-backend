@@ -51,6 +51,16 @@ const careNavigatorSchema = new mongoose.Schema(
       },
       default: "Active",
     },
+    username: {
+      type: String,
+      required: [true, "Username is required"],
+      trim: true,
+    },
+    calendlyName: {
+      type: String,
+      required: [true, "Calendly Name is required"],
+      trim: true,
+    },
   },
   {
     timestamps: true,
@@ -74,6 +84,13 @@ careNavigatorSchema.pre("save", function (next) {
   if (this.isModified("email")) {
     this.email = this.email.toLowerCase();
   }
+
+  // Format username to CN-username format
+  if (this.isModified("username")) {
+    this.username = `cn_${this.username}`;
+  }
+
+ 
   next();
 });
 

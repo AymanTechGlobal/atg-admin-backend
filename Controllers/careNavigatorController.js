@@ -43,6 +43,12 @@ const getCareNavigator = async (req, res) => {
 // Create care navigator
 const createCareNavigator = async (req, res) => {
   try {
+    // Ensure username and calendly name don't already have prefixes
+    if (req.body.username?.startsWith("cn_")) {
+      req.body.username = req.body.username.substring(3);
+    }
+   
+
     const navigator = await CareNavigator.create(req.body);
     res.status(201).json({
       success: true,
@@ -67,6 +73,12 @@ const createCareNavigator = async (req, res) => {
 // Update care navigator
 const updateCareNavigator = async (req, res) => {
   try {
+    // Ensure username and calendly name don't already have prefixes
+    if (req.body.username?.startsWith("cn_")) {
+      req.body.username = req.body.username.substring(3);
+    }
+    
+
     const navigator = await CareNavigator.findByIdAndUpdate(
       req.params.id,
       req.body,
