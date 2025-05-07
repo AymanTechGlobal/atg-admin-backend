@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const hashPassword = require("../utils/hashPassword");
 
 const AdminSchema = new mongoose.Schema(
   {
@@ -22,7 +23,6 @@ const AdminSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please provide a password"],
       minlength: 6,
-      select: false,
     },
     phone: {
       type: String,
@@ -43,5 +43,10 @@ const AdminSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+// Match admin entered password to hashed password in database
+AdminSchema.methods.matchPassword = async function (enteredPassword) {
+  return this.password === enteredPassword;
+};
 
 module.exports = mongoose.model("Admin", AdminSchema);

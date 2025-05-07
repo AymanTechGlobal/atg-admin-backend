@@ -1,10 +1,10 @@
-const User = require("../Models/User");
-const bcrypt = require("bcryptjs");
+const Admin = require("../Models/Admin");
+const hashPassword = require("../utils/hashPassword");
 
 // Get all admins
 const getAllAdmins = async (req, res) => {
   try {
-    const admins = await User.find({ role: "admin" }).select("-password");
+    const admins = await Admin.find().select("-password");
     res.status(200).json({
       success: true,
       data: admins,
@@ -21,10 +21,7 @@ const getAllAdmins = async (req, res) => {
 // Get single admin
 const getAdmin = async (req, res) => {
   try {
-    const admin = await User.findOne({
-      _id: req.params.id,
-      role: "admin",
-    }).select("-password");
+    const admin = await Admin.findById(req.params.id).select("-password");
     if (!admin) {
       return res.status(404).json({
         success: false,
@@ -47,10 +44,10 @@ const getAdmin = async (req, res) => {
 // Create admin
 const createAdmin = async (req, res) => {
   try {
-    const { email, password, contact } = req.body;
+    const { name, email, password, phone } = req.body;
 
     // Check if admin already exists
-    const existingAdmin = await User.findOne({ email });
+    const existingAdmin = await Admin.findOne({ email });
     if (existingAdmin) {
       return res.status(400).json({
         success: false,
@@ -59,14 +56,14 @@ const createAdmin = async (req, res) => {
     }
 
     // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = hashPassword(password);
 
     // Create admin
-    const admin = await User.create({
+    const admin = await Admin.create({
+      name,
       email,
       password: hashedPassword,
-      contact,
+      phone,
       role: "admin",
     });
 
@@ -74,8 +71,9 @@ const createAdmin = async (req, res) => {
       success: true,
       data: {
         id: admin._id,
+        name: admin.name,
         email: admin.email,
-        contact: admin.contact,
+        phone: admin.phone,
         role: admin.role,
       },
     });
@@ -98,12 +96,18 @@ const createAdmin = async (req, res) => {
 // Update admin
 const updateAdmin = async (req, res) => {
   try {
-    const { email, contact } = req.body;
-    const admin = await User.findOneAndUpdate(
-      { _id: req.params.id, role: "admin" },
-      { email, contact },
-      { new: true, runValidators: true }
-    ).select("-password");
+    const { name, email, phone, password } = req.body;
+    const updateData = { name, email, phone };
+
+    // Only update password if provided
+    if (password) {
+      updateData.password = hashPassword(password);
+    }
+
+    const admin = await Admin.findByIdAndUpdate(req.params.id, updateData, {
+      new: true,
+      runValidators: true,
+    }).select("-password");
 
     if (!admin) {
       return res.status(404).json({
@@ -135,10 +139,7 @@ const updateAdmin = async (req, res) => {
 // Delete admin
 const deleteAdmin = async (req, res) => {
   try {
-    const admin = await User.findOneAndDelete({
-      _id: req.params.id,
-      role: "admin",
-    });
+    const admin = await Admin.findByIdAndDelete(req.params.id);
     if (!admin) {
       return res.status(404).json({
         success: false,
