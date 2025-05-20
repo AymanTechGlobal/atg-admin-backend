@@ -1,5 +1,5 @@
 const CarePlan = require("../Models/CarePlan");
-const { getSignedUrl, getFileStream } = require("../utils/s3");
+
 
 // Get all care plans
 exports.getAllCarePlans = async (req, res) => {

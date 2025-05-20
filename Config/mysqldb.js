@@ -1,7 +1,6 @@
 // const mysql = require("mysql2");
 const mysql = require("mysql2/promise");
 
-
 const dbHost = process.env.MYSQL_HOST_NAME;
 const dbPort = process.env.MYSQL_PORT;
 const dbUser = process.env.MYSQL_DB_USER;
