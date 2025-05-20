@@ -1,15 +1,30 @@
-const Appointment = require("../Models/Appointment");
+const AppointmentModel = require("../Models/MySQLAppointments");
+
+// Helper to map MySQL row to frontend format
+function mapAppointment(row) {
+  return {
+    appointmentId: row.appointment_id,
+    patientName: row.client_username, // or row.client_name if you want the username
+    careNavigator: row.care_navigator,
+    appointmentDate: row.appointment_date_time
+      ? new Date(row.appointment_date_time).toISOString().split("T")[0]
+      : null,
+    appointmentTime: row.appointment_date_time
+      ? new Date(row.appointment_date_time).toISOString()
+      : null,
+    status: row.status,
+    notes: row.client_note,
+  };
+}
 
 // Get all appointments
 exports.getAllAppointments = async (req, res) => {
   try {
-    const appointments = await Appointment.find()
-      .sort({ appointmentDate: -1 })
-      .limit(100); // Limit to prevent overwhelming response
-
+    const appointmentsSQL = await AppointmentModel.getAllAppointments();
+    const simpleAppointments = appointmentsSQL.map(mapAppointment);
     res.status(200).json({
       success: true,
-      data: appointments,
+      data: simpleAppointments,
     });
   } catch (error) {
     res.status(500).json({
@@ -23,9 +38,9 @@ exports.getAllAppointments = async (req, res) => {
 // Get single appointment
 exports.getAppointment = async (req, res) => {
   try {
-    const appointment = await Appointment.findOne({
-      appointmentId: req.params.id,
-    });
+    const appointment = await AppointmentModel.getAppointmentById(
+      req.params.id
+    );
     if (!appointment) {
       return res.status(404).json({
         success: false,
@@ -34,7 +49,7 @@ exports.getAppointment = async (req, res) => {
     }
     res.status(200).json({
       success: true,
-      data: appointment,
+      data: mapAppointment(appointment),
     });
   } catch (error) {
     res.status(500).json({
@@ -49,30 +64,22 @@ exports.getAppointment = async (req, res) => {
 exports.updateAppointment = async (req, res) => {
   try {
     const { status, notes } = req.body;
-
-    // Only allow updating status and notes
-    const appointment = await Appointment.findOneAndUpdate(
-      { appointmentId: req.params.id },
-      {
-        $set: {
-          status: status,
-          notes: notes,
-          syncTimestamp: new Date(),
-        },
-      },
-      { new: true, runValidators: true }
-    );
-
-    if (!appointment) {
+    const appointmentId = req.params.id;
+    const result = await AppointmentModel.updateAppointment(appointmentId, {
+      status,
+      notes,
+    });
+    if (result.affectedRows === 0) {
       return res.status(404).json({
         success: false,
         message: "Appointment not found",
       });
     }
-
+    // Return the updated appointment
+    const updated = await AppointmentModel.getAppointmentById(appointmentId);
     res.status(200).json({
       success: true,
-      data: appointment,
+      data: mapAppointment(updated),
     });
   } catch (error) {
     res.status(400).json({
@@ -86,10 +93,9 @@ exports.updateAppointment = async (req, res) => {
 // Delete appointment
 exports.deleteAppointment = async (req, res) => {
   try {
-    const appointment = await Appointment.findOneAndDelete({
-      appointmentId: req.params.id,
-    });
-    if (!appointment) {
+    const appointmentId = req.params.id;
+    const result = await AppointmentModel.deleteAppointment(appointmentId);
+    if (result.affectedRows === 0) {
       return res.status(404).json({
         success: false,
         message: "Appointment not found",
@@ -108,17 +114,16 @@ exports.deleteAppointment = async (req, res) => {
   }
 };
 
-// Get sync status
+// Get sync status (optional, can be based on latest updated appointment)
 exports.getSyncStatus = async (req, res) => {
   try {
-    const lastSync = await Appointment.findOne()
-      .sort({ syncTimestamp: -1 })
-      .select("syncTimestamp");
-
+    const appointments = await AppointmentModel.getAllAppointments(1);
+    const lastSync =
+      appointments.length > 0 ? appointments[0].appointment_date_time : null;
     res.status(200).json({
       success: true,
       data: {
-        lastSync: lastSync ? lastSync.syncTimestamp : null,
+        lastSync: lastSync ? new Date(lastSync).toISOString() : null,
       },
     });
   } catch (error) {
