@@ -7,7 +7,7 @@ const helmet = require("helmet"); //importing helmet for security headers
 const morgan = require("morgan"); //importing morgan for logging
 
 // Import routes
-const clientRoute = require("./Routes/client");
+
 const authRoute = require("./Routes/login");
 const logoutRoute = require("./Routes/logout");
 const appointmentRoute = require("./Routes/appointment");
@@ -29,7 +29,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // Routes
-app.use("/api/client", clientRoute);
+
 app.use("/api/auth", authRoute);
 app.use("/api/logout", logoutRoute);
 app.use("/api/appointments", appointmentRoute);
