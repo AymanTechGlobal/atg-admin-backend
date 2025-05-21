@@ -1,13 +1,14 @@
-const CarePlan = require("../Models/CarePlan");
+//const CarePlan = require("../Models/CarePlan");
+const { getSignedUrl, getFileStream } = require("../utils/s3");
+const MySQLCarePlan = require("../Models/MYSQLCarePlans");
 
-
-// Get all care plans
 exports.getAllCarePlans = async (req, res) => {
   try {
-    const carePlans = await CarePlan.find().sort({ dateCreated: -1 });
+    const carePlansSQL = await MySQLCarePlan.getAllCarePlans();
+    const simpleCarePlans = carePlansSQL.map(mapCarePlan);
     res.status(200).json({
       success: true,
-      data: carePlans,
+      data: simpleCarePlans,
     });
   } catch (error) {
     res.status(500).json({
@@ -17,6 +18,35 @@ exports.getAllCarePlans = async (req, res) => {
     });
   }
 };
+
+function mapCarePlan(carePlan) {
+  return {
+    _id: carePlan.care_plan_id,
+    patientname: carePlan.patient_name,
+    careNavigator: carePlan.care_navigator,
+    dateCreated: carePlan.date_created,
+    date: carePlan.end_date,
+    status: carePlan.status,
+    actions: carePlan.actions,
+  };
+}
+
+// Get all care plans
+// exports.getAllCarePlans = async (req, res) => {
+//   try {
+//     const carePlans = await CarePlan.find().sort({ dateCreated: -1 });
+//     res.status(200).json({
+//       success: true,
+//       data: carePlans,
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       success: false,
+//       message: "Error fetching care plans",
+//       error: error.message,
+//     });
+//   }
+// };
 
 // Get single care plan
 exports.getCarePlan = async (req, res) => {

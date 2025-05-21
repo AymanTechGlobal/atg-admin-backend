@@ -1,11 +1,27 @@
-// const mysql = require("mysql2");
+// Use dotenv to load environment variables from .env file
+require("dotenv").config();
 const mysql = require("mysql2/promise");
 
-const dbHost = process.env.MYSQL_HOST_NAME;
-const dbPort = process.env.MYSQL_PORT;
-const dbUser = process.env.MYSQL_DB_USER;
-const dbPassword = process.env.MYSQL_DB_PASSWORD;
-const dbSchema = process.env.MYSQL_DB_SCHEMA;
+// Get DB config from environment variables
+const dbHost =
+  process.env.MYSQL_HOST_NAME ||
+  "atghealthcare.cjmme44o6mb1.ap-south-1.rds.amazonaws.com";
+const dbPort = process.env.MYSQL_PORT || 3306;
+const dbUser = process.env.MYSQL_DB_USER || "app_user";
+const dbPassword = process.env.MYSQL_DB_PASSWORD || "atgappuser.12";
+const dbSchema = process.env.MYSQL_DB_SCHEMA || "atghealthcare";
+
+// Log config for debugging (do not log password in production)
+console.log(
+  "DB HOST:",
+  dbHost,
+  "PORT:",
+  dbPort,
+  "USER:",
+  dbUser,
+  "DB:",
+  dbSchema
+);
 
 // Create a connection pool (recommended over single connection)
 const pool = mysql.createPool({
@@ -21,3 +37,14 @@ const pool = mysql.createPool({
 
 // Export for use in other files
 module.exports = pool;
+
+console.log(
+  "DB HOST:",
+  dbHost,
+  "PORT:",
+  dbPort,
+  "USER:",
+  dbUser,
+  "DB:",
+  dbSchema
+);
