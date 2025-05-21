@@ -15,7 +15,7 @@ const carePlanRoute = require("./Routes/carePlan");
 const patientRoute = require("./Routes/patients");
 const careNavigatorRoute = require("./Routes/careNavigator");
 const adminRoute = require("./Routes/admin");
-
+const dashboardRoute = require("./Routes/dashboard");
 const app = express();
 dotenv.config();
 
@@ -29,7 +29,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // Routes
-
+app.use("/api/dashboard", dashboardRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/logout", logoutRoute);
 app.use("/api/appointments", appointmentRoute);
