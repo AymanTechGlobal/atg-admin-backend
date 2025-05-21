@@ -29,7 +29,7 @@ const getAllPatients = async (req, res) => {
 function mapDetailedToSimple(detailedPatients) {
   return detailedPatients.map((detailedPatient) => ({
     userId: detailedPatient.client_username,
-    submittedAt: new Date(), // current timestamp
+    submittedAt: detailedPatient.created_at, // Use registered date from users table
     allergies: detailedPatient.known_allergies || "Not specified",
     contactNumber: detailedPatient.contact_number || "Unknown",
     dateOfBirth: detailedPatient.date_of_birth,
