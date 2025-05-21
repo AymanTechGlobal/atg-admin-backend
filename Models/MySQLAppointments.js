@@ -3,19 +3,10 @@ const db = require("../Config/mysqldb");
 // Fetch all appointments with client and care navigator names
 async function getAllAppointments(limit = 100) {
   const [rows] = await db.query(
-    `SELECT 
-      ca.appointment_id, 
-      ca.client_username, 
-      ca.appointment_date_time, 
-      ca.status, 
-      ca.client_note, 
-      u_client.username AS client_name, 
-      u_navigator.username AS care_navigator
-    FROM client_appointments ca
-    LEFT JOIN users u_client ON ca.client_username = u_client.username
-    LEFT JOIN users u_navigator ON u_navigator.role = 1
-    ORDER BY ca.appointment_date_time DESC
-    LIMIT ?`,
+    `SELECT appointment_id, client_username, status, appointment_date_time
+     FROM client_appointments
+     ORDER BY appointment_date_time DESC
+     LIMIT ?`,
     [limit]
   );
   return rows;

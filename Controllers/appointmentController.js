@@ -4,16 +4,14 @@ const AppointmentModel = require("../Models/MySQLAppointments");
 function mapAppointment(row) {
   return {
     appointmentId: row.appointment_id,
-    patientName: row.client_username, // or row.client_name if you want the username
-    careNavigator: row.care_navigator,
+    patientName: row.client_username,
+    status: row.status,
     appointmentDate: row.appointment_date_time
       ? new Date(row.appointment_date_time).toISOString().split("T")[0]
-      : null,
+      : "",
     appointmentTime: row.appointment_date_time
       ? new Date(row.appointment_date_time).toISOString()
-      : null,
-    status: row.status,
-    notes: row.client_note,
+      : "",
   };
 }
 
