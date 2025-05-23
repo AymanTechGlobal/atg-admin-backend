@@ -1,6 +1,5 @@
 // ---------------------------------------------------------------------------
 
-
 // This file is the main file for the API
 // uses mongodb to store the data
 // uses the backend/models/dotenv.js to get the environment variables
@@ -9,7 +8,6 @@
 // uses the backend/models/helmet.js to secure the headers
 // uses the backend/models/morgan.js to log the requests
 // uses the backend/models/body-parser.js to parse the JSON and URL-encoded bodies
-
 
 // ---------------------------------------------------------------------------
 
@@ -31,6 +29,7 @@ const patientRoute = require("./Routes/patients");
 const careNavigatorRoute = require("./Routes/careNavigator");
 const adminRoute = require("./Routes/admin");
 const dashboardRoute = require("./Routes/dashboard");
+const messageRoute = require("./Routes/message");
 const app = express();
 dotenv.config();
 
@@ -52,6 +51,7 @@ app.use("/api/careplans", carePlanRoute);
 app.use("/api/patients", patientRoute);
 app.use("/api/care-navigators", careNavigatorRoute);
 app.use("/api/admin", adminRoute);
+app.use("/api/messages", messageRoute);
 
 // MongoDB Connection
 const PORT = process.env.PORT || 5000;
