@@ -1,3 +1,10 @@
+//---------------------------------------------------------------------------
+// This file is used to define the routes for the admins
+// uses the backend/routes/adminController.js to get the data
+// uses mongodb to store the data and password hashing to secure the password
+
+//----------------------------------------------------------------------------
+
 const express = require("express");
 const router = express.Router();
 const {

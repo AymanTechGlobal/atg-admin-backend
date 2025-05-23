@@ -1,3 +1,8 @@
+// ---------------------------------------------------------------------------
+// This file is used to define the schema for the appointments
+// uses RDS DB directly to fetch the data
+// ---------------------------------------------------------------------------
+
 const db = require("../Config/mysqldb");
 
 // Fetch all appointments with client and care navigator names

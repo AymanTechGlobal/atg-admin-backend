@@ -1,3 +1,12 @@
+// ---------------------------------------------------------------------------
+
+// This file is used to define the schema for the appointments
+// Not used in the project as we are using the MYSQLAppointments.js file
+// but kept it here for reference
+// RDS DB is used to retrieve the data not mongodb so no need to use this file
+
+//----------------------------------------------------------------------------
+
 // const mongoose = require("mongoose");
 
 // // status, date , time, doctor can be updated

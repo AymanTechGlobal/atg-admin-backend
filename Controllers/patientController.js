@@ -1,3 +1,9 @@
+// ---------------------------------------------------------------------------
+// This file is used to define the controller for the patients
+// uses the backend/models/MySQLPatients.js file to get the data
+// uses RDS DB directly to fetch the data
+// ---------------------------------------------------------------------------
+
 const Patient = require("../Models/Patients");
 const PatientModel = require("../Models/MySQLPatients");
 

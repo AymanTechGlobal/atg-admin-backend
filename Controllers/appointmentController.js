@@ -1,3 +1,9 @@
+// ---------------------------------------------------------------------------
+// This file is used to define the controller for the appointments
+// uses the backend/models/MySQLAppointments.js file to get the data
+// uses RDS DB directly to fetch the data
+// ---------------------------------------------------------------------------
+
 const AppointmentModel = require("../Models/MySQLAppointments");
 
 // Helper to map MySQL row to frontend format

@@ -1,3 +1,8 @@
+// ---------------------------------------------------------------------------
+// This file is used to define the schema for the care plans
+// uses RDS DB directly to fetch the data
+// ---------------------------------------------------------------------------
+
 const db = require("../Config/mysqldb");
 
 async function getAllCarePlans(limit = 100) {

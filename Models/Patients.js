@@ -1,4 +1,9 @@
-// // models/Patient.js
+// ---------------------------------------------------------------------------
+// This file is used to define the schema for the patients
+// Not used in the project as we are using the MYSQLPatients.js file 
+// but kept it here for reference
+// RDS DB is used to retrieve the data not mongodb so no need to use this file
+// ---------------------------------------------------------------------------
 
 // const mongoose = require("mongoose");
 

@@ -1,5 +1,10 @@
 const mongoose = require("mongoose");
 
+// ---------------------------------------------------------------------------
+// This file is used to define the schema for the care navigators
+// uses mongodb to store the data
+// ---------------------------------------------------------------------------
+
 const careNavigatorSchema = new mongoose.Schema(
   {
     name: {

@@ -1,3 +1,11 @@
+
+// ---------------------------------------------------------------------------
+// This file is used to define the schema for the care plans
+// Not used in the project as we are using the MYSQLCarePlans.js file 
+// but kept it here for reference
+// RDS DB is used to retrieve the data not mongodb so no need to use this file
+// ---------------------------------------------------------------------------
+
 // const mongoose = require("mongoose");
 
 // const carePlanSchema = new mongoose.Schema(

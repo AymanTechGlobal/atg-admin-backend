@@ -1,4 +1,7 @@
-//logout route for the admin panel
+// ---------------------------------------------------------------------------
+// logout route for the admin panel
+// uses the backend/models/jwt.js to verify the token
+// ---------------------------------------------------------------------------
 
 const express = require("express");
 const router = express.Router();

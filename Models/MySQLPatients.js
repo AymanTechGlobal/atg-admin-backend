@@ -1,3 +1,8 @@
+// ---------------------------------------------------------------------------
+// This file is used to define the schema for the patients
+// uses RDS DB directly to fetch the data
+// ---------------------------------------------------------------------------
+
 const db = require("../Config/mysqldb");
 
 async function getAllPatients(limit = 100) {

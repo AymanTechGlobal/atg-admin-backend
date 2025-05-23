@@ -1,3 +1,7 @@
+// this file uses to create, update, delete and get the care navigators
+// uses the backend/routes/careNavigatorController.js to get the data
+// stores the data in the mongodb database ---> mobilapp fetch the data from the mongodb database to rds db
+
 const express = require("express");
 const router = express.Router();
 const CareNavigator = require("../Models/CareNavigator");

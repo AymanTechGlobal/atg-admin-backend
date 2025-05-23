@@ -1,3 +1,11 @@
+// ---------------------------------------------------------------------------
+// This file is used to define the schema for the admins
+// uses mongodb to store the data
+
+// created for the admin panel (existing admins)
+
+// ---------------------------------------------------------------------------
+
 const mongoose = require("mongoose");
 const hashPassword = require("../utils/hashPassword");
 

@@ -1,3 +1,8 @@
+// ---------------------------------------------------------------------------
+// This file is used to connect to the database
+// uses mongodb to store the data
+// ---------------------------------------------------------------------------
+
 const mongoose = require("mongoose");
 
 const URI = process.env.MONGO_URI;

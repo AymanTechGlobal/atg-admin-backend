@@ -1,3 +1,9 @@
+// ---------------------------------------------------------------------------
+// This file is used to define the controller for the admins
+// uses the backend/models/Admin.js file to get the data
+// uses mongodb to store the data
+// ---------------------------------------------------------------------------
+
 const Admin = require("../Models/Admin");
 const hashPassword = require("../utils/hashPassword");
 

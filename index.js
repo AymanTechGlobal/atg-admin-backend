@@ -1,3 +1,18 @@
+// ---------------------------------------------------------------------------
+
+
+// This file is the main file for the API
+// uses mongodb to store the data
+// uses the backend/models/dotenv.js to get the environment variables
+// uses the backend/models/mongoose.js to connect to the database
+// uses the backend/models/cors.js to allow cross-origin resource sharing
+// uses the backend/models/helmet.js to secure the headers
+// uses the backend/models/morgan.js to log the requests
+// uses the backend/models/body-parser.js to parse the JSON and URL-encoded bodies
+
+
+// ---------------------------------------------------------------------------
+
 const express = require("express"); //importing express for routing
 const cors = require("cors"); //importing cors for cross-origin resource sharing
 const mongoose = require("mongoose"); //importing mongoose for database connection

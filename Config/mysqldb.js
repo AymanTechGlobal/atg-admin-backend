@@ -1,4 +1,8 @@
-// Use dotenv to load environment variables from .env file
+// ---------------------------------------------------------------------------
+// This file is used to connect to the MySQL database
+// uses RDS DB directly to fetch the data
+// ---------------------------------------------------------------------------
+
 require("dotenv").config();
 const mysql = require("mysql2/promise");
 

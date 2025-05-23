@@ -1,3 +1,9 @@
+// ---------------------------------------------------------------------------
+// This file is used to define the controller for the care navigators
+// uses the backend/models/CareNavigator.js file to get the data
+// uses mongodb to store the data
+// ---------------------------------------------------------------------------
+
 const CareNavigator = require("../Models/CareNavigator");
 
 // Get all care navigators
@@ -47,7 +53,6 @@ const createCareNavigator = async (req, res) => {
     if (req.body.username?.startsWith("cn_")) {
       req.body.username = req.body.username.substring(3);
     }
-   
 
     const navigator = await CareNavigator.create(req.body);
     res.status(201).json({
@@ -77,7 +82,6 @@ const updateCareNavigator = async (req, res) => {
     if (req.body.username?.startsWith("cn_")) {
       req.body.username = req.body.username.substring(3);
     }
-    
 
     const navigator = await CareNavigator.findByIdAndUpdate(
       req.params.id,

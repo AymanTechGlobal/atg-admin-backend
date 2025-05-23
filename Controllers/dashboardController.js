@@ -1,3 +1,9 @@
+// ---------------------------------------------------------------------------
+// This file is used to define the controller for the dashboard
+// uses RDS DB directly to fetch the data no
+// not using models for this file
+// ---------------------------------------------------------------------------
+
 const db = require("../Config/mysqldb");
 
 exports.getDashboardStats = async (req, res) => {

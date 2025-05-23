@@ -1,4 +1,8 @@
-//const CarePlan = require("../Models/CarePlan");
+// ---------------------------------------------------------------------------
+// This file is used to define the controller for the care plans
+// uses the backend/models/MYSQLCarePlans.js file to get the data
+// uses RDS DB directly to fetch the data
+// ---------------------------------------------------------------------------
 
 const MySQLCarePlan = require("../Models/MYSQLCarePlans");
 
@@ -72,59 +76,59 @@ exports.getCarePlan = async (req, res) => {
 };
 
 // Download care plan document
-exports.downloadCarePlan = async (req, res) => {
-  try {
-    const carePlan = await CarePlan.findById(req.params.id);
-    if (!carePlan) {
-      return res.status(404).json({
-        success: false,
-        message: "Care plan not found",
-      });
-    }
+// exports.downloadCarePlan = async (req, res) => {
+//   try {
+//     const carePlan = await CarePlan.findById(req.params.id);
+//     if (!carePlan) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Care plan not found",
+//       });
+//     }
 
-    const fileStream = await getFileStream(carePlan.s3Key);
+//     const fileStream = await getFileStream(carePlan.s3Key);
 
-    res.setHeader("Content-Type", "application/pdf");
-    res.setHeader(
-      "Content-Disposition",
-      `attachment; filename=${carePlan.planName}.pdf`
-    );
+//     res.setHeader("Content-Type", "application/pdf");
+//     res.setHeader(
+//       "Content-Disposition",
+//       `attachment; filename=${carePlan.planName}.pdf`
+//     );
 
-    fileStream.pipe(res);
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Error downloading care plan",
-      error: error.message,
-    });
-  }
-};
+//     fileStream.pipe(res);
+//   } catch (error) {
+//     res.status(500).json({
+//       success: false,
+//       message: "Error downloading care plan",
+//       error: error.message,
+//     });
+//   }
+// };
 
-// Get signed URL for care plan
-exports.getCarePlanSignedUrl = async (req, res) => {
-  try {
-    const carePlan = await CarePlan.findById(req.params.id);
-    if (!carePlan) {
-      return res.status(404).json({
-        success: false,
-        message: "Care plan not found",
-      });
-    }
+// // Get signed URL for care plan
+// exports.getCarePlanSignedUrl = async (req, res) => {
+//   try {
+//     const carePlan = await CarePlan.findById(req.params.id);
+//     if (!carePlan) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Care plan not found",
+//       });
+//     }
 
-    const signedUrl = await getSignedUrl(carePlan.s3Key);
+//     const signedUrl = await getSignedUrl(carePlan.s3Key);
 
-    res.status(200).json({
-      success: true,
-      data: {
-        signedUrl,
-        fileName: `${carePlan.planName}.pdf`,
-      },
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Error generating signed URL",
-      error: error.message,
-    });
-  }
-};
+//     res.status(200).json({
+//       success: true,
+//       data: {
+//         signedUrl,
+//         fileName: `${carePlan.planName}.pdf`,
+//       },
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       success: false,
+//       message: "Error generating signed URL",
+//       error: error.message,
+//     });
+//   }
+// };
