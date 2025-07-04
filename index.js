@@ -35,12 +35,33 @@ dotenv.config();
 
 // Middleware
 app.use(express.json());
-app.use(cors());
+
+// CORS configuration
+const corsOptions = {
+  origin: [
+    "https://atgadmin.vercel.app",
+    "http://localhost:3000",
+    "http://localhost:3001",
+  ],
+  credentials: true,
+  optionsSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
+
 app.use(helmet());
 app.use(morgan("common"));
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+
+// Health check endpoint
+app.get("/", (req, res) => {
+  res.json({
+    message: "ATG Admin Backend API is running",
+    status: "success",
+    timestamp: new Date().toISOString(),
+  });
+});
 
 // Routes
 app.use("/api/dashboard", dashboardRoute);
