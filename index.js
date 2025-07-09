@@ -22,6 +22,7 @@ const morgan = require("morgan"); //importing morgan for logging
 // Import routes
 
 const authRoute = require("./Routes/login");
+const authValidationRoute = require("./Routes/auth");
 const logoutRoute = require("./Routes/logout");
 const appointmentRoute = require("./Routes/appointment");
 const carePlanRoute = require("./Routes/carePlan");
@@ -45,6 +46,8 @@ const corsOptions = {
   ],
   credentials: true,
   optionsSuccessStatus: 200,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
 };
 app.use(cors(corsOptions));
 
@@ -66,6 +69,7 @@ app.get("/", (req, res) => {
 // Routes
 app.use("/api/dashboard", dashboardRoute);
 app.use("/api/auth", authRoute);
+app.use("/api/auth", authValidationRoute);
 app.use("/api/logout", logoutRoute);
 app.use("/api/appointments", appointmentRoute);
 app.use("/api/careplans", carePlanRoute);
