@@ -41,6 +41,7 @@ app.use(express.json());
 const corsOptions = {
   origin: [
     "https://atgadmin.vercel.app",
+    "https://level-2-software-project.vercel.app",
     "http://localhost:3000",
     "http://localhost:3001",
   ],
