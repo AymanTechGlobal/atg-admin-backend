@@ -5,6 +5,11 @@
 // ---------------------------------------------------------------------------
 
 const CareNavigator = require("../Models/CareNavigator");
+const CNModel = require("../Models/MySQLCN");
+const fetch = require("node-fetch");
+
+const API_GATEWAY_URL =
+  "https://uqzl6jyqvg.execute-api.ap-south-1.amazonaws.com/dev/adminCreateCN";
 
 // Get all care navigators
 const getAllCareNavigators = async (req, res) => {
@@ -49,6 +54,49 @@ const getCareNavigator = async (req, res) => {
 // Create care navigator
 const createCareNavigator = async (req, res) => {
   try {
+    console.log("Hi this is working...");
+    console.log("Hi this is working...");
+    const cnUsername = req.body.username;
+    const cnEmail = req.body.email;
+    const cnCalendlyName = req.body.calendlyName;
+    const cnName = req.body.name;
+    const cnPhone = req.body.phone;
+
+    // Call the Cognito Lambda function via API Gateway
+    const lambdaResponse = await fetch(API_GATEWAY_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: cnUsername,
+        email: cnEmail,
+      }),
+    });
+
+    const lambdaResult = await lambdaResponse.json();
+    const parsedBody =
+      typeof lambdaResult.body === "string"
+        ? JSON.parse(lambdaResult.body)
+        : lambdaResult.body;
+
+    if (lambdaResult.statusCode !== 200 || !parsedBody.success) {
+      return res.status(lambdaResult.statusCode).json({
+        success: false,
+        message: parsedBody.message || "Failed to create user in Cognito",
+        code: parsedBody.code || "UnknownError",
+      });
+    }
+
+    // Create CN in MySQL database
+    await CNModel.createCareNavigator(
+      cnUsername,
+      cnEmail,
+      cnCalendlyName,
+      cnName,
+      cnPhone
+    );
+
     // Ensure username and calendly name don't already have prefixes
     if (req.body.username?.startsWith("cn_")) {
       req.body.username = req.body.username.substring(3);
