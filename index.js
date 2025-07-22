@@ -31,6 +31,7 @@ const careNavigatorRoute = require("./Routes/careNavigator");
 const adminRoute = require("./Routes/admin");
 const dashboardRoute = require("./Routes/dashboard");
 const messageRoute = require("./Routes/message");
+const reportsRoute = require("./Routes/reports");
 const app = express();
 dotenv.config();
 
@@ -78,6 +79,7 @@ app.use("/api/patients", patientRoute);
 app.use("/api/care-navigators", careNavigatorRoute);
 app.use("/api/admin", adminRoute);
 app.use("/api/messages", messageRoute);
+app.use("/api/reports", reportsRoute);
 
 // MongoDB Connection
 const PORT = process.env.PORT || 5000;

@@ -10,18 +10,10 @@ const PatientModel = require("../Models/MySQLPatients");
 // Get all patients
 const getAllPatients = async (req, res) => {
   try {
-    // const patients = await Patient.find().sort({ submittedAt: -1 });
-    // console.log(`patients: ${JSON.stringify(patients)}`);
-
     const patientsSQL = await PatientModel.getAllPatients();
-    // console.log(`patientsSQL: ${JSON.stringify(patientsSQL)}`);
-    const simplePatients = mapDetailedToSimple(patientsSQL);
-    // console.log(`simplePatients: ${JSON.stringify(simplePatients)}`);
-
     res.status(200).json({
       success: true,
-      // data: patients,
-      data: simplePatients,
+      data: patientsSQL,
     });
   } catch (error) {
     console.error("Error fetching patients:", error);
@@ -31,18 +23,6 @@ const getAllPatients = async (req, res) => {
     });
   }
 };
-
-function mapDetailedToSimple(detailedPatients) {
-  return detailedPatients.map((detailedPatient) => ({
-    userId: detailedPatient.client_username,
-    submittedAt: detailedPatient.created_at, // Use registered date from users table
-    allergies: detailedPatient.known_allergies || "Not specified",
-    contactNumber: detailedPatient.contact_number || "Unknown",
-    dateOfBirth: detailedPatient.date_of_birth,
-    fullName: detailedPatient.full_name,
-    gender: detailedPatient.gender,
-  }));
-}
 
 // Get single patient
 const getPatient = async (req, res) => {

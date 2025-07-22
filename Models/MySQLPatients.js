@@ -7,12 +7,19 @@ const db = require("../Config/mysqldb");
 
 async function getAllPatients(limit = 100) {
   const [rows] = await db.query(
-    `SELECT cd.*, cd.client_username AS patient_name, u.created_at
-     FROM client_details cd
-     JOIN users u ON cd.client_username = u.username
-     WHERE u.role = 0
-     ORDER BY u.created_at DESC
-     LIMIT ?`,
+    `SELECT
+      u.username AS userId,
+      cd.calendly_name AS fullName,
+      cd.date_of_birth AS dateOfBirth,
+      cd.gender,
+      cd.contact_number AS contactNumber,
+      cd.known_allergies AS allergies,
+      u.created_at AS submittedAt
+    FROM users u
+    LEFT JOIN client_details cd ON u.username = cd.client_username
+    WHERE u.role = 0
+    ORDER BY u.created_at DESC
+    LIMIT ?`,
     [limit]
   );
   return rows;

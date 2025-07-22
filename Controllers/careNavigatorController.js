@@ -56,9 +56,12 @@ const createCareNavigator = async (req, res) => {
 
     const navigator = await CareNavigator.create(req.body);
     res.status(201).json({
+      message: "Care navigator created successfully",
       success: true,
       data: navigator,
     });
+    console.log("Care navigator created successfully");
+    console.log(navigator);
   } catch (error) {
     console.error("Error creating care navigator:", error);
     if (error.name === "ValidationError") {
