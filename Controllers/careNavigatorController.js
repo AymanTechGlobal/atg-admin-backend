@@ -8,8 +8,11 @@ const CareNavigator = require("../Models/CareNavigator");
 const CNModel = require("../Models/MySQLCN");
 const fetch = require("node-fetch");
 
-const API_GATEWAY_URL =
+const CreateCN_API_GATEWAY_URL =
   "https://uqzl6jyqvg.execute-api.ap-south-1.amazonaws.com/dev/adminCreateCN";
+
+const TempPWD_API_GATEWAY_URL =
+  "https://uqzl6jyqvg.execute-api.ap-south-1.amazonaws.com/dev/newTempPWDRequest";
 
 // Get all care navigators
 const getAllCareNavigators = async (req, res) => {
@@ -54,16 +57,14 @@ const getCareNavigator = async (req, res) => {
 // Create care navigator
 const createCareNavigator = async (req, res) => {
   try {
-    console.log("Hi this is working...");
-    console.log("Hi this is working...");
-    const cnUsername = req.body.username;
+    const cnUsername = req.body.username.trim();
     const cnEmail = req.body.email;
     const cnCalendlyName = req.body.calendlyName;
     const cnName = req.body.name;
     const cnPhone = req.body.phone;
 
     // Call the Cognito Lambda function via API Gateway
-    const lambdaResponse = await fetch(API_GATEWAY_URL, {
+    const lambdaResponse = await fetch(CreateCN_API_GATEWAY_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -109,6 +110,57 @@ const createCareNavigator = async (req, res) => {
     });
   } catch (error) {
     console.error("Error creating care navigator:", error);
+    if (error.name === "ValidationError") {
+      const errors = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({
+        success: false,
+        errors,
+      });
+    }
+    res.status(500).json({
+      success: false,
+      error: "Error creating care navigator",
+    });
+  }
+};
+
+// New temporary password setting
+const newTempPWDRequest = async (req, res) => {
+  try {
+    const cnUsername = req.body.username.trim();
+    const tempPWD = req.body.tempPWD;
+
+    // Call the Cognito Lambda function via API Gateway
+    const lambdaResponse = await fetch(TempPWD_API_GATEWAY_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+          username: cnUsername,
+          tempPWD: tempPWD,
+      }),
+    });
+
+    const lambdaResult = await lambdaResponse.json();
+    const parsedBody =
+      typeof lambdaResult.body === "string"
+        ? JSON.parse(lambdaResult.body)
+        : lambdaResult.body;
+
+    if (lambdaResult.statusCode !== 200 || !parsedBody.success) {
+      return res.status(lambdaResult.statusCode).json({
+        success: false,
+        message: parsedBody.message || "Failed to update temporary password",
+        code: parsedBody.code || "UnknownError",
+      });
+    }
+    res.status(201).json({
+      success: true,
+      data: parsedBody.data || null,
+    });
+  } catch (error) {
+    console.error("Failed to update temporary password:", error);
     if (error.name === "ValidationError") {
       const errors = Object.values(error.errors).map((err) => err.message);
       return res.status(400).json({
@@ -189,6 +241,7 @@ module.exports = {
   getAllCareNavigators,
   getCareNavigator,
   createCareNavigator,
+  newTempPWDRequest,
   updateCareNavigator,
   deleteCareNavigator,
 };
