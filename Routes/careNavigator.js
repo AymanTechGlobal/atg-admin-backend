@@ -11,6 +11,7 @@ const {
   getAllCareNavigators,
   getCareNavigator,
   createCareNavigator,
+  newTempPWDRequest,
   updateCareNavigator,
   deleteCareNavigator,
 } = require("../Controllers/careNavigatorController");
@@ -21,6 +22,7 @@ router.use(protect); // Protect all routes
 router.get("/", getAllCareNavigators);
 router.get("/:id", getCareNavigator);
 router.post("/", createCareNavigator);
+router.post("/resend-temp-password", newTempPWDRequest);
 router.put("/:id", updateCareNavigator);
 router.delete("/:id", deleteCareNavigator);
 
