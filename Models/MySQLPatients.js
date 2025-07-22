@@ -9,12 +9,12 @@ async function getAllPatients(limit = 100) {
   const [rows] = await db.query(
     `SELECT
       u.username AS userId,
-      cd.calendly_name AS fullName,
+      COALESCE(cd.full_name, u.calendly_name, u.username) AS fullName,
       cd.date_of_birth AS dateOfBirth,
       cd.gender,
       cd.contact_number AS contactNumber,
       cd.known_allergies AS allergies,
-      u.created_at AS submittedAt
+      u.created_at AS registeredAt
     FROM users u
     LEFT JOIN client_details cd ON u.username = cd.client_username
     WHERE u.role = 0
