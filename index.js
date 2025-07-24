@@ -39,13 +39,22 @@ dotenv.config();
 app.use(express.json());
 
 // CORS configuration
+const allowedOrigins = [
+  "https://level-2-software-project.vercel.app",
+  "https://atgadmin.vercel.app",
+  "http://localhost:3000",
+  "http://localhost:3001",
+];
 const corsOptions = {
-  origin: [
-    "https://atgadmin.vercel.app",
-    "https://level-2-software-project.vercel.app",
-    "http://localhost:3000",
-    "http://localhost:3001",
-  ],
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true,
   optionsSuccessStatus: 200,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
