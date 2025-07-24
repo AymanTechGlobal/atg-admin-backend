@@ -12,10 +12,10 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
-const db = require("../Config/mysqldb");
-const bcrypt = require("bcryptjs");
+const User = require("../Models/User");
+const Admin = require("../Models/Admin");
 const dotenv = require("dotenv");
-dotenv.config();
+const hashPassword = require("../utils/hashPassword");
 
 // @desc    Auth user & get token
 // @route   POST /api/auth/login
@@ -24,43 +24,46 @@ router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Find user by email
-    const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [
-      email,
-    ]);
-    if (!rows.length) {
+    // Check for admin first
+    let user = await Admin.findOne({ email });
+    let isAdmin = true;
+
+    // If not found in admin collection, check user collection
+    if (!user) {
+      user = await User.findOne({ email });
+      isAdmin = false;
+    }
+
+    if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
-    const user = rows[0];
 
-    // Compare password
-    const isMatch = await bcrypt.compare(password, user.password);
+    // Hash the provided password
+    const hashedPassword = hashPassword(password);
+
+    // Check if password matches
+    const isMatch = await user.matchPassword(hashedPassword);
+
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    // Determine role
-    let role = "user";
-    if (user.role === 2) role = "admin";
-    else if (user.role === 1) role = "care_navigator";
-    else if (user.role === 0) role = "patient";
-
     // Create token
     const token = jwt.sign(
       {
-        id: user.id || user.username,
-        role,
+        id: user._id,
+        role: isAdmin ? "admin" : "user",
       },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "1h" } // 1 hour token expiration
     );
 
     res.status(200).json({
       token,
       user: {
-        id: user.id || user.username,
+        id: user._id,
         email: user.email,
-        role,
+        role: isAdmin ? "admin" : "user",
       },
     });
   } catch (error) {

@@ -5,7 +5,8 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
-const db = require("../Config/mysqldb");
+const Admin = require("../Models/Admin");
+const User = require("../Models/User");
 
 // @desc    Validate token and get user info
 // @route   GET /api/auth/validate
@@ -13,29 +14,32 @@ const db = require("../Config/mysqldb");
 router.get("/validate", async (req, res) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
+
     if (!token) {
       return res.status(401).json({ message: "No token provided" });
     }
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    // Find user by id or username
-    const [rows] = await db.query(
-      "SELECT * FROM users WHERE id = ? OR username = ?",
-      [decoded.id, decoded.id]
-    );
-    if (!rows.length) {
+
+    // Find user by ID
+    let user = await Admin.findById(decoded.id);
+    let isAdmin = true;
+
+    if (!user) {
+      user = await User.findById(decoded.id);
+      isAdmin = false;
+    }
+
+    if (!user) {
       return res.status(401).json({ message: "User not found" });
     }
-    const user = rows[0];
-    let role = "user";
-    if (user.role === 2) role = "admin";
-    else if (user.role === 1) role = "care_navigator";
-    else if (user.role === 0) role = "patient";
+
     res.json({
       valid: true,
       user: {
-        id: user.id || user.username,
+        id: user._id,
         email: user.email,
-        role,
+        role: isAdmin ? "admin" : "user",
       },
     });
   } catch (error) {
@@ -50,27 +54,30 @@ router.get("/validate", async (req, res) => {
 router.get("/me", async (req, res) => {
   try {
     const token = req.headers.authorization?.split(" ")[1];
+
     if (!token) {
       return res.status(401).json({ message: "No token provided" });
     }
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const [rows] = await db.query(
-      "SELECT * FROM users WHERE id = ? OR username = ?",
-      [decoded.id, decoded.id]
-    );
-    if (!rows.length) {
+
+    let user = await Admin.findById(decoded.id);
+    let isAdmin = true;
+
+    if (!user) {
+      user = await User.findById(decoded.id);
+      isAdmin = false;
+    }
+
+    if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    const user = rows[0];
-    let role = "user";
-    if (user.role === 2) role = "admin";
-    else if (user.role === 1) role = "care_navigator";
-    else if (user.role === 0) role = "patient";
+
     res.json({
       user: {
-        id: user.id || user.username,
+        id: user._id,
         email: user.email,
-        role,
+        role: isAdmin ? "admin" : "user",
       },
     });
   } catch (error) {
