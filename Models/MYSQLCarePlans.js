@@ -14,7 +14,7 @@ async function getAllCarePlans(limit = 100) {
         cp.date_created,
         cp.end_date,
         cp.status,
-        cp.actions
+        cp.care_plan_name AS actions
      FROM care_plans cp
      JOIN users cu ON cp.client_username = cu.username AND cu.role = 0
      JOIN users nu ON cp.care_navigator_username = nu.username AND nu.role = 1
