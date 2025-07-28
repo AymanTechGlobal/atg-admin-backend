@@ -30,10 +30,25 @@ const messageSchema = new mongoose.Schema(
       enum: ["sent", "draft"],
       default: "draft",
     },
+    messageId: {
+      type: String,
+      trim: true,
+      // Only required for sent messages
+      required: function () {
+        return this.status === "sent";
+      },
+    },
+    read: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
   }
 );
+
+// Index for better query performance
+messageSchema.index({ from: 1, to: 1, status: 1, createdAt: -1 });
 
 module.exports = mongoose.model("Message", messageSchema);

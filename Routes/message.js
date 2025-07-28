@@ -5,6 +5,7 @@ const {
   saveDraft,
   getMessages,
   getMessageById,
+  getMessageStats,
 } = require("../Controllers/messageController");
 const { protect } = require("../middleware/auth");
 
@@ -17,6 +18,8 @@ router.post("/send", sendMessage);
 router.post("/draft", saveDraft);
 // Get all messages (optionally filter by status/user)
 router.get("/", getMessages);
+// Get message statistics
+router.get("/stats", getMessageStats);
 // Get a single message by id
 router.get("/:id", getMessageById);
 

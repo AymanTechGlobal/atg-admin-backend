@@ -24,74 +24,36 @@ exports.getBusinessOverview = async (req, res) => {
   }
 };
 
-// Get patient analytics and trends
-exports.getPatientAnalytics = async (req, res) => {
+// Export business overview report
+exports.exportReport = async (req, res) => {
   try {
-    const data = await ReportsModel.getPatientAnalytics();
-    res.json({ success: true, data });
-  } catch (error) {
-    console.error("Error fetching patient analytics:", error);
-    res
-      .status(500)
-      .json({ success: false, error: "Error fetching patient analytics" });
-  }
-};
+    const { format = "csv", startDate, endDate } = req.query;
 
-// Get care navigator performance metrics
-exports.getCareNavigatorPerformance = async (req, res) => {
-  try {
-    const data = await ReportsModel.getCareNavigatorPerformance();
-    res.json({ success: true, data });
-  } catch (error) {
-    console.error("Error fetching care navigator performance:", error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        error: "Error fetching care navigator performance",
-      });
-  }
-};
+    const data = await ReportsModel.getBusinessOverview(startDate, endDate);
 
-// Get appointment analytics
-exports.getAppointmentAnalytics = async (req, res) => {
-  try {
-    const { startDate, endDate } = req.query;
-    const data = await ReportsModel.getAppointmentAnalytics(startDate, endDate);
-    res.json({ success: true, data });
+    if (format === "json") {
+      res.setHeader("Content-Type", "application/json");
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="business-overview-${
+          new Date().toISOString().split("T")[0]
+        }.json"`
+      );
+      res.json(data);
+    } else {
+      // Convert to CSV
+      const csvData = ReportsModel.convertToCSV(data, "business-overview");
+      res.setHeader("Content-Type", "text/csv");
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="business-overview-${
+          new Date().toISOString().split("T")[0]
+        }.csv"`
+      );
+      res.send(csvData);
+    }
   } catch (error) {
-    console.error("Error fetching appointment analytics:", error);
-    res
-      .status(500)
-      .json({ success: false, error: "Error fetching appointment analytics" });
-  }
-};
-
-// Get care plan effectiveness
-exports.getCarePlanEffectiveness = async (req, res) => {
-  try {
-    const data = await ReportsModel.getCarePlanEffectiveness();
-    res.json({ success: true, data });
-  } catch (error) {
-    console.error("Error fetching care plan effectiveness:", error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        error: "Error fetching care plan effectiveness",
-      });
-  }
-};
-
-// Get system usage analytics
-exports.getSystemUsageAnalytics = async (req, res) => {
-  try {
-    const data = await ReportsModel.getSystemUsageAnalytics();
-    res.json({ success: true, data });
-  } catch (error) {
-    console.error("Error fetching system usage analytics:", error);
-    res
-      .status(500)
-      .json({ success: false, error: "Error fetching system usage analytics" });
+    console.error("Error exporting report:", error);
+    res.status(500).json({ success: false, error: "Error exporting report" });
   }
 };
