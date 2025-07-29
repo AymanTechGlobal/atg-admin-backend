@@ -30,10 +30,10 @@ exports.getDashboardStats = async (req, res) => {
     );
     // Active/inactive patients
     const [[{ activePatients }]] = await db.query(
-      "SELECT COUNT(*) as activePatients FROM users WHERE role = 0 AND status = 1"
+      "SELECT COUNT(*) as activePatients FROM users WHERE role = 0 AND status = 2"
     );
     const [[{ inactivePatients }]] = await db.query(
-      "SELECT COUNT(*) as inactivePatients FROM users WHERE role = 0 AND status = 0"
+      "SELECT COUNT(*) as inactivePatients FROM users WHERE role = 0 AND status = 0 || status = 1"
     );
     // Most common allergies
     const [mostCommonAllergies] = await db.query(
@@ -41,7 +41,7 @@ exports.getDashboardStats = async (req, res) => {
     );
     // Recent registrations
     const [recentRegistrations] = await db.query(
-      `SELECT username as userId, calendly_name as fullName, created_at as registeredAt FROM users WHERE role = 0 ORDER BY created_at DESC LIMIT 5`
+      `SELECT username as userId, created_at as registeredAt FROM users WHERE role = 0 ORDER BY created_at DESC LIMIT 5`
     );
     // Appointments by status
     const [appointmentsByStatus] = await db.query(
