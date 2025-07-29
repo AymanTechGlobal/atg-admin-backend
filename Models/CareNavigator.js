@@ -24,13 +24,6 @@ const careNavigatorSchema = new mongoose.Schema(
         /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
         "Please enter a valid email",
       ],
-      validate: {
-        validator: async function (email) {
-          const count = await this.constructor.countDocuments({ email });
-          return count === 0;
-        },
-        message: "Email already exists",
-      },
     },
     phone: {
       type: String,
@@ -95,7 +88,6 @@ careNavigatorSchema.pre("save", function (next) {
     this.username = `cn_${this.username}`;
   }
 
- 
   next();
 });
 
@@ -106,6 +98,52 @@ careNavigatorSchema.pre("validate", function (next) {
       this[path] = this[path].trim();
     }
   });
+  next();
+});
+
+// Add a pre-save middleware to check email uniqueness
+careNavigatorSchema.pre("save", async function (next) {
+  if (this.isModified("email")) {
+    try {
+      const CareNavigator = this.constructor;
+      const existingNavigator = await CareNavigator.findOne({
+        email: this.email,
+        _id: { $ne: this._id }, // Exclude current document from check
+      });
+
+      if (existingNavigator) {
+        const error = new Error("Email already exists");
+        error.name = "ValidationError";
+        return next(error);
+      }
+    } catch (error) {
+      return next(error);
+    }
+  }
+  next();
+});
+
+// Add a pre-findOneAndUpdate middleware to check email uniqueness
+careNavigatorSchema.pre("findOneAndUpdate", async function (next) {
+  const update = this.getUpdate();
+
+  if (update.email) {
+    try {
+      const CareNavigator = this.model;
+      const existingNavigator = await CareNavigator.findOne({
+        email: update.email,
+        _id: { $ne: this.getQuery()._id }, // Exclude current document from check
+      });
+
+      if (existingNavigator) {
+        const error = new Error("Email already exists");
+        error.name = "ValidationError";
+        return next(error);
+      }
+    } catch (error) {
+      return next(error);
+    }
+  }
   next();
 });
 

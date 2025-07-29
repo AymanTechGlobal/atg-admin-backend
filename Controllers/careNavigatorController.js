@@ -63,6 +63,18 @@ const createCareNavigator = async (req, res) => {
     const cnName = req.body.name;
     const cnPhone = req.body.phone;
 
+    // Check if email already exists in MongoDB
+    const existingNavigator = await CareNavigator.findOne({
+      email: cnEmail.toLowerCase(),
+    });
+
+    if (existingNavigator) {
+      return res.status(400).json({
+        success: false,
+        error: "Email already exists",
+      });
+    }
+
     // Call the Cognito Lambda function via API Gateway
     const lambdaResponse = await fetch(CreateCN_API_GATEWAY_URL, {
       method: "POST",
@@ -113,6 +125,8 @@ const createCareNavigator = async (req, res) => {
     console.log(navigator);
   } catch (error) {
     console.error("Error creating care navigator:", error);
+
+    // Handle validation errors
     if (error.name === "ValidationError") {
       const errors = Object.values(error.errors).map((err) => err.message);
       return res.status(400).json({
@@ -120,6 +134,16 @@ const createCareNavigator = async (req, res) => {
         errors,
       });
     }
+
+    // Handle duplicate key errors (MongoDB unique constraint)
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyValue)[0];
+      return res.status(400).json({
+        success: false,
+        error: `${field} already exists`,
+      });
+    }
+
     res.status(500).json({
       success: false,
       error: "Error creating care navigator",
@@ -140,8 +164,8 @@ const newTempPWDRequest = async (req, res) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-          username: cnUsername,
-          tempPWD: tempPWD,
+        username: cnUsername,
+        tempPWD: tempPWD,
       }),
     });
 
@@ -181,28 +205,50 @@ const newTempPWDRequest = async (req, res) => {
 // Update care navigator
 const updateCareNavigator = async (req, res) => {
   try {
+    const { id } = req.params;
+    const updateData = { ...req.body };
+
     // Ensure username and calendly name don't already have prefixes
-    if (req.body.username?.startsWith("cn_")) {
-      req.body.username = req.body.username.substring(3);
+    if (updateData.username?.startsWith("cn_")) {
+      updateData.username = updateData.username.substring(3);
     }
 
-    const navigator = await CareNavigator.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true, runValidators: true }
-    );
+    // If email is being updated, check for uniqueness manually
+    if (updateData.email) {
+      const existingNavigator = await CareNavigator.findOne({
+        email: updateData.email.toLowerCase(),
+        _id: { $ne: id },
+      });
+
+      if (existingNavigator) {
+        return res.status(400).json({
+          success: false,
+          error: "Email already exists",
+        });
+      }
+    }
+
+    const navigator = await CareNavigator.findByIdAndUpdate(id, updateData, {
+      new: true,
+      runValidators: true,
+      context: "query",
+    });
+
     if (!navigator) {
       return res.status(404).json({
         success: false,
         error: "Care navigator not found",
       });
     }
+
     res.status(200).json({
       success: true,
       data: navigator,
     });
   } catch (error) {
     console.error("Error updating care navigator:", error);
+
+    // Handle validation errors
     if (error.name === "ValidationError") {
       const errors = Object.values(error.errors).map((err) => err.message);
       return res.status(400).json({
@@ -210,6 +256,24 @@ const updateCareNavigator = async (req, res) => {
         errors,
       });
     }
+
+    // Handle duplicate key errors (MongoDB unique constraint)
+    if (error.code === 11000) {
+      const field = Object.keys(error.keyValue)[0];
+      return res.status(400).json({
+        success: false,
+        error: `${field} already exists`,
+      });
+    }
+
+    // Handle cast errors (invalid ObjectId)
+    if (error.name === "CastError") {
+      return res.status(400).json({
+        success: false,
+        error: "Invalid care navigator ID",
+      });
+    }
+
     res.status(500).json({
       success: false,
       error: "Error updating care navigator",
