@@ -32,6 +32,20 @@ const UserSchema = new mongoose.Schema({
     type: Number,
     required: [true, "Please provide a contact number"],
   },
+  // Password reset fields
+  resetPasswordToken: {
+    type: String,
+  },
+  resetPasswordExpires: {
+    type: Date,
+  },
+  // Remember me functionality
+  rememberMeToken: {
+    type: String,
+  },
+  rememberMeExpires: {
+    type: Date,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
@@ -41,6 +55,28 @@ const UserSchema = new mongoose.Schema({
 // Match user entered password to hashed password in database
 UserSchema.methods.matchPassword = async function (enteredPassword) {
   return this.password === enteredPassword;
+};
+
+// Generate password reset token
+UserSchema.methods.generatePasswordResetToken = function () {
+  const resetToken = require("crypto").randomBytes(32).toString("hex");
+  this.resetPasswordToken = require("crypto")
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+  this.resetPasswordExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
+  return resetToken;
+};
+
+// Generate remember me token
+UserSchema.methods.generateRememberMeToken = function () {
+  const rememberToken = require("crypto").randomBytes(32).toString("hex");
+  this.rememberMeToken = require("crypto")
+    .createHash("sha256")
+    .update(rememberToken)
+    .digest("hex");
+  this.rememberMeExpires = Date.now() + 30 * 24 * 60 * 60 * 1000; // 30 days
+  return rememberToken;
 };
 
 module.exports = mongoose.model("User", UserSchema);

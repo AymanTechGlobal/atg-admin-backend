@@ -6,12 +6,14 @@ yarn-error.log*
 package-lock.json
 yarn.lock
 
-# Environment variables
+# Environment variables (CRITICAL - Never commit these!)
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+.env.example
+.env.*
 
 # Build output
 dist/
@@ -21,6 +23,10 @@ out/
 # Logs
 logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
 
 # Runtime data
 pids
@@ -32,14 +38,27 @@ pids
 lib-cov
 
 # Coverage directory used by tools like istanbul
-coverage
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
 
 # IDE specific files
 .idea/
 .vscode/
 *.swp
 *.swo
+*~
+
+# OS generated files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
 # Debug
 .debug
@@ -67,3 +86,132 @@ coverage
 # MongoDB
 *.mongodb
 *.mongo
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Upload directories
+uploads/
+public/uploads/
+
+# SSL certificates
+*.pem
+*.key
+*.crt
+*.csr
+*.p12
+*.pfx
+
+# AWS credentials
+.aws/
+aws-credentials.json
+
+# Lambda deployment packages
+lambda.zip
+lambda_package/
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Cache directories
+.cache/
+.parcel-cache/
+
+# Test files
+test-results/
+junit.xml
+
+# Documentation build
+docs/build/
+
+# Local development
+.local/
+local/
+
+# PM2
+.pm2/
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# Kubernetes
+*.kubeconfig
+
+# Secrets and keys
+secrets/
+keys/
+*.key
+*.pem
+*.crt
+*.csr
+*.p12
+*.pfx
+
+# Email templates (if they contain sensitive data)
+email-templates/
+templates/emails/
+
+# Backup and archive files
+*.tar
+*.tar.gz
+*.zip
+*.rar
+*.7z
+
+# Editor files
+.vscode/settings.json
+.vscode/launch.json
+.vscode/tasks.json
+*.sublime-project
+*.sublime-workspace
+
+# OS specific
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Windows
+*.lnk
+
+# Linux
+*~
+
+# macOS
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk

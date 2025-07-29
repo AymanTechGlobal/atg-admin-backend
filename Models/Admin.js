@@ -46,6 +46,20 @@ const AdminSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    // Password reset fields
+    resetPasswordToken: {
+      type: String,
+    },
+    resetPasswordExpires: {
+      type: Date,
+    },
+    // Remember me functionality
+    rememberMeToken: {
+      type: String,
+    },
+    rememberMeExpires: {
+      type: Date,
+    },
   },
   {
     timestamps: true,
@@ -55,6 +69,28 @@ const AdminSchema = new mongoose.Schema(
 // Match admin entered password to hashed password in database
 AdminSchema.methods.matchPassword = async function (enteredPassword) {
   return this.password === enteredPassword;
+};
+
+// Generate password reset token
+AdminSchema.methods.generatePasswordResetToken = function () {
+  const resetToken = require("crypto").randomBytes(32).toString("hex");
+  this.resetPasswordToken = require("crypto")
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+  this.resetPasswordExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
+  return resetToken;
+};
+
+// Generate remember me token
+AdminSchema.methods.generateRememberMeToken = function () {
+  const rememberToken = require("crypto").randomBytes(32).toString("hex");
+  this.rememberMeToken = require("crypto")
+    .createHash("sha256")
+    .update(rememberToken)
+    .digest("hex");
+  this.rememberMeExpires = Date.now() + 30 * 24 * 60 * 60 * 1000; // 30 days
+  return rememberToken;
 };
 
 module.exports = mongoose.model("Admin", AdminSchema);
